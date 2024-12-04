@@ -1,39 +1,65 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import React from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image } from 'react-native';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import MainScreen from './MainScreen';  // Главная страница (экран)
+import AnalysesScreen from './AnalysesScreen';  // Экран с анализами
+import ProfileScreen from './ProfileScreen';  // Экран профиля
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+const Tab = createBottomTabNavigator();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
+const _Layout = () => {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Tab.Navigator
+      screenOptions={{
+        tabBarActiveTintColor: '#e91e63',  // Цвет активной вкладки
+        tabBarInactiveTintColor: '#888',  // Цвет неактивной вкладки
+        tabBarStyle: {
+          backgroundColor: '#f8d7da',  // Цвет фона панели
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={MainScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Image
+              source={require('../assets/home.png')}  // Иконка для вкладки Home
+              style={{ width: size, height: size, tintColor: color }}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Analyses"
+        component={AnalysesScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Image
+              source={require('../assets/analyses.png')}  // Иконка для вкладки Analyses
+              style={{ width: size, height: size, tintColor: color }}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Image
+              source={require('../assets/profile.png')}  // Иконка для вкладки Profile
+              style={{ width: size, height: size, tintColor: color }}
+            />
+          ),
+          headerShown: false,
+        }}
+      />
+    </Tab.Navigator>
   );
-}
+};
+
+export default _Layout;
