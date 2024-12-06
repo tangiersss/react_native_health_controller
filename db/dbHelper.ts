@@ -1,9 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
-// Открытие или создание базы данных
 const db = SQLite.openDatabaseSync('healthData.db');
 
-// Интерфейсы для таблиц
 interface DateRow {
   _id: number;
   date: string;
@@ -39,7 +37,6 @@ interface WeightDataRow {
   _did: number;
 }
 
-// Функция для создания всех таблиц
 export const createTables = async (): Promise<void> => {
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS dates (
@@ -84,67 +81,54 @@ export const createTables = async (): Promise<void> => {
   `);
 };
 
-// Функция для добавления даты
 export const addDate = async (date: string): Promise<void> => {
   await db.runAsync('INSERT INTO dates (date) VALUES (?)', [date]);
 };
 
-// Функция для добавления пульса
 export const addHeartRate = async (heartRate: string, dateId: number): Promise<void> => {
   await db.runAsync('INSERT INTO heart_rate_data (heart_rate, _did) VALUES (?, ?)', [heartRate, dateId]);
 };
 
-// Функция для добавления давления
 export const addPressureData = async (pressure: string, dateId: number): Promise<void> => {
   await db.runAsync('INSERT INTO pressure_data (pressure, _did) VALUES (?, ?)', [pressure, dateId]);
 };
 
-// Функция для добавления количества часов сна
 export const addSleepingHours = async (hours: number, dateId: number): Promise<void> => {
   await db.runAsync('INSERT INTO sleeping_hours (hours, _did) VALUES (?, ?)', [hours, dateId]);
 };
 
-// Функция для добавления количества шагов
 export const addStepsData = async (steps: string, dateId: number): Promise<void> => {
   await db.runAsync('INSERT INTO steps_data (steps, _did) VALUES (?, ?)', [steps, dateId]);
 };
 
-// Функция для добавления веса
 export const addWeightData = async (weight: string, dateId: number): Promise<void> => {
   await db.runAsync('INSERT INTO weight_data (weight, _did) VALUES (?, ?)', [weight, dateId]);
 };
 
-// Функция для получения всех дат
 export const getDates = async (): Promise<DateRow[]> => {
   return await db.getAllAsync('SELECT * FROM dates');
 };
 
-// Функция для получения данных по пульсу
 export const getHeartRateData = async (dateId: number): Promise<HeartRateRow[]> => {
   return await db.getAllAsync('SELECT * FROM heart_rate_data WHERE _did = ?', [dateId]);
 };
 
-// Функция для получения данных по давлению
 export const getPressureData = async (dateId: number): Promise<PressureDataRow[]> => {
   return await db.getAllAsync('SELECT * FROM pressure_data WHERE _did = ?', [dateId]);
 };
 
-// Функция для получения данных по часам сна
 export const getSleepingHoursData = async (dateId: number): Promise<SleepingHoursRow[]> => {
   return await db.getAllAsync('SELECT * FROM sleeping_hours WHERE _did = ?', [dateId]);
 };
 
-// Функция для получения данных по шагам
 export const getStepsData = async (dateId: number): Promise<StepsDataRow[]> => {
   return await db.getAllAsync('SELECT * FROM steps_data WHERE _did = ?', [dateId]);
 };
 
-// Функция для получения данных по весу
 export const getWeightData = async (dateId: number): Promise<WeightDataRow[]> => {
   return await db.getAllAsync('SELECT * FROM weight_data WHERE _did = ?', [dateId]);
 };
 
-// Метод для удаления всех таблиц из базы данных
 export const deleteAllTables = async (): Promise<void> => {
   await db.execAsync(`
     DROP TABLE IF EXISTS dates;
@@ -156,13 +140,11 @@ export const deleteAllTables = async (): Promise<void> => {
   `);
 };
 
-// Метод для повторного создания базы после удаления
 export const resetDatabase = async (): Promise<void> => {
   await deleteAllTables();
   await createTables();
 };
 
-// Функция для получения шагов с датами
 export const getStepsWithDates = async (dateId: number): Promise<any[]> => {
   return await db.getAllAsync(`
     SELECT s.steps, d.date
@@ -172,7 +154,6 @@ export const getStepsWithDates = async (dateId: number): Promise<any[]> => {
   `, [dateId]);
 };
 
-// Получение данных пульса с датами
 export const getHeartRateWithDates = async (dateId: number): Promise<any[]> => {
   return await db.getAllAsync(`
     SELECT h.heart_rate, d.date
@@ -182,7 +163,6 @@ export const getHeartRateWithDates = async (dateId: number): Promise<any[]> => {
   `, [dateId]);
 };
 
-// Получение данных по давлению с датами
 export const getPressureWithDates = async (dateId: number): Promise<any[]> => {
   return await db.getAllAsync(`
     SELECT p.pressure, d.date
@@ -192,7 +172,6 @@ export const getPressureWithDates = async (dateId: number): Promise<any[]> => {
   `, [dateId]);
 };
 
-// Получение данных по часам сна с датами
 export const getSleepingHoursWithDates = async (dateId: number): Promise<any[]> => {
   return await db.getAllAsync(`
     SELECT s.hours, d.date
@@ -202,7 +181,6 @@ export const getSleepingHoursWithDates = async (dateId: number): Promise<any[]> 
   `, [dateId]);
 };
 
-// Получение данных по весу с датами
 export const getWeightWithDates = async (dateId: number): Promise<any[]> => {
   return await db.getAllAsync(`
     SELECT w.weight, d.date
@@ -210,4 +188,9 @@ export const getWeightWithDates = async (dateId: number): Promise<any[]> => {
     JOIN dates d ON w._did = d._id
     WHERE w._did = ?
   `, [dateId]);
+};
+
+export const getAllDates = async (): Promise<DateRow[]> => {
+  const result = await db.getAllAsync('SELECT * FROM dates ORDER BY date');
+  return result as DateRow[];
 };

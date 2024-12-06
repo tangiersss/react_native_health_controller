@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
-import * as dbHelper from '../db/dbHelper';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  SafeAreaView,
+} from "react-native";
+import * as dbHelper from "../db/dbHelper";
 
 const MainScreen = () => {
-  const [currentDate, setCurrentDate] = useState('');
+  const [currentDate, setCurrentDate] = useState("");
 
   const recommendations = [
     "Eat healthy food",
@@ -14,49 +23,59 @@ const MainScreen = () => {
   ];
 
   const activityData = [
-    { name: 'Temperature', value: '36.6°C', icon: require('../assets/temperature.png') },
-    { name: 'Heart', value: 72, icon: require('../assets/heart.png') },
-    { name: 'Pressure', value: '120/80 mmHg', icon: require('../assets/pressure.png') },
-    { name: 'Weight', value: 70, icon: require('../assets/weight.png') },
-    { name: 'Time sleep', value: 8, icon: require('../assets/sleep.png') },
-    { name: 'Steps', value: 10235, icon: require('../assets/steps.png') },
+    {
+      name: "Temperature",
+      value: "36.6°C",
+      icon: require("../assets/temperature.png"),
+    },
+    { name: "Heart", value: 72, icon: require("../assets/heart.png") },
+    {
+      name: "Pressure",
+      value: "120/80 mmHg",
+      icon: require("../assets/pressure.png"),
+    },
+    { name: "Weight", value: 70, icon: require("../assets/weight.png") },
+    { name: "Time sleep", value: 8, icon: require("../assets/sleep.png") },
+    { name: "Steps", value: 10235, icon: require("../assets/steps.png") },
   ];
 
   useEffect(() => {
     const setupDatabase = async () => {
       try {
         await dbHelper.createTables();
-  
+
         const today = new Date();
-        const day = String(today.getDate()).padStart(2, '0'); // Добавляем ведущий ноль для дня
-        const month = today.getMonth(); // Получаем номер месяца (0-11)
+        const day = String(today.getDate()).padStart(2, "0");
+        const month = today.getMonth();
         const year = today.getFullYear();
-  
-        // Отображение полного названия месяца
-        const monthName = today.toLocaleString('default', { month: 'long' });
-  
-        // Для базы данных, сохраняем дату в формате DD.MM.YYYY, где месяц - число
-        const currentDateStringForDB = `${day}.${String(month + 1).padStart(2, '0')}`;
-        setCurrentDate(`${day} ${monthName} ${year}`); // Для отображения на экране
-  
-        // Добавляем дату в базу данных
-        await dbHelper.addDate(currentDateStringForDB);
+
+        const monthName = today.toLocaleString("default", { month: "long" });
+
+        const currentDateStringForDB = `${day}.${String(month + 1).padStart(
+          2,
+          "0"
+        )}`;
+        setCurrentDate(`${day} ${monthName} ${year}`);
+
+        // await dbHelper.addDate("01.12");
+        // await dbHelper.addDate("02.12");
+        // await dbHelper.addDate("03.12");
+        // await dbHelper.addDate("04.12");
       } catch (error) {
-        console.error('Error setting up database:', error);
+        console.error("Error setting up database:", error);
       }
     };
-  
+
     setupDatabase();
   }, []);
-  
 
   const handleDeleteDatabase = async () => {
     try {
       await dbHelper.resetDatabase();
-      Alert.alert('Success', 'Database cleared successfully!');
+      Alert.alert("Success", "Database cleared successfully!");
     } catch (error) {
-      Alert.alert('Error', 'Failed to clear the database. Try again.');
-      console.error('Error clearing database:', error);
+      Alert.alert("Error", "Failed to clear the database. Try again.");
+      console.error("Error clearing database:", error);
     }
   };
 
@@ -64,25 +83,33 @@ const MainScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.appBar}>
-          <Image source={require('../assets/main_icon.png')} style={styles.appBarImage} />
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteDatabase}>
+          <Image
+            source={require("../assets/main_icon.png")}
+            style={styles.appBarImage}
+          />
+          {/* <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={handleDeleteDatabase}
+          >
             <Text style={styles.deleteButtonText}>Clear DB</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         <FlatList
           data={[
             {
-              key: 'dateContainer',
+              key: "dateContainer",
               content: (
                 <View style={styles.dateContainer}>
-                  <Text style={styles.day}>{currentDate.split(' ')[0]}</Text>
-                  <Text style={styles.monthYear}>{currentDate.slice(currentDate.indexOf(' ') + 1)}</Text>
+                  <Text style={styles.day}>{currentDate.split(" ")[0]}</Text>
+                  <Text style={styles.monthYear}>
+                    {currentDate.slice(currentDate.indexOf(" ") + 1)}
+                  </Text>
                 </View>
               ),
             },
             {
-              key: 'activitySection',
+              key: "activitySection",
               content: (
                 <>
                   <Text style={styles.sectionTitle}>YOUR ACTIVITY</Text>
@@ -102,7 +129,7 @@ const MainScreen = () => {
               ),
             },
             {
-              key: 'tipsSection',
+              key: "tipsSection",
               content: (
                 <>
                   <Text style={styles.sectionTitle}>TODAY'S TIPS</Text>
@@ -130,22 +157,21 @@ const MainScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f8d7da', // Чтобы SafeArea совпадала с основным фоном
+    backgroundColor: "#f8d7da",
   },
   container: {
     flex: 1,
-    backgroundColor: '#f8d7da',
-    paddingHorizontal: 20,
-    paddingTop: 20,
+    backgroundColor: "#f8d7da",
+    paddingTop: 50,
   },
   appBar: {
     height: 60,
-    backgroundColor: 'transparent',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '100%',
-    position: 'absolute',
+    backgroundColor: "#765D60",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
+    width: "100%",
+    position: "absolute",
     top: 0,
     zIndex: 1,
     paddingHorizontal: 10,
@@ -155,56 +181,56 @@ const styles = StyleSheet.create({
     height: 35,
   },
   deleteButton: {
-    backgroundColor: '#ff6666',
+    backgroundColor: "#ff6666",
     padding: 10,
     borderRadius: 5,
   },
   deleteButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   dateContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 20,
   },
   day: {
     fontSize: 60,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontWeight: "bold",
+    color: "#000000",
   },
   monthYear: {
     fontSize: 18,
-    color: '#000000',
+    color: "#000000",
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#000000',
+    fontWeight: "bold",
+    color: "#000000",
     marginVertical: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   gridItem: {
-    backgroundColor: '#e6a1a1',
+    backgroundColor: "#e6a1a1",
     paddingVertical: 20,
     paddingHorizontal: 15,
     margin: 10,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '45%',
+    justifyContent: "center",
+    alignItems: "center",
+    width: "45%",
     height: 100,
   },
   gridItemText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
   },
   gridItemValue: {
     fontSize: 14,
-    color: '#000000',
+    color: "#000000",
   },
   icon: {
     width: 40,
@@ -213,15 +239,15 @@ const styles = StyleSheet.create({
   tipItem: {
     padding: 15,
     marginBottom: 10,
-    backgroundColor: '#e6a1a1',
+    backgroundColor: "#e6a1a1",
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowRadius: 5,
   },
   tipText: {
     fontSize: 16,
-    color: '#000',
+    color: "#000",
   },
 });
 
