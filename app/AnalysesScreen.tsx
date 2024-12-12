@@ -46,15 +46,18 @@ const AnalysesScreen = () => {
 
   const addTestDataToDatabase = async () => {
     try {
-      await dbHelper.addStepsData("8000", 1);
-      await dbHelper.addStepsData("12000", 2);
-      await dbHelper.addStepsData("14000", 3);
-      await dbHelper.addHeartRate("70", 1);
-      await dbHelper.addHeartRate("69", 2);
-      await dbHelper.addHeartRate("75", 3);
-      await dbHelper.addHeartRate("73", 4);
+      await dbHelper.addStepsData("12461", 1);
+      await dbHelper.addStepsData("15700", 2);
+      await dbHelper.addStepsData("13637", 3);
+      await dbHelper.addStepsData("22670", 4);
+      await dbHelper.addStepsData("19549", 5);
+      await dbHelper.addSleepingHours(6, 1);
+      await dbHelper.addSleepingHours(7, 2);
+      await dbHelper.addSleepingHours(8, 3);
+      await dbHelper.addSleepingHours(7, 4);
+      await dbHelper.addSleepingHours(8, 5);
     } catch (error) {
-      console.error("Ошибка при добавлении тестовых данных:", error);
+      console.error("Error", error);
     }
   };
 
@@ -69,28 +72,25 @@ const AnalysesScreen = () => {
 
       const dates = await dbHelper.getAllDates();
 
-      // Массив для хранения всех данных для графика
       const allData: any[] = [];
 
       for (let i = 0; i < dates.length; i++) {
         const dateId = dates[i]._id;
         let chartData: any;
 
-        // Для каждого типа данных, загружаем нужную информацию
         switch (chartType) {
           case "steps":
             chartData = await dbHelper.getStepsWithDates(dateId);
-            labels.push(dates[i].date); // Добавляем дату в метки
+            labels.push(dates[i].date);
 
-            // Если данные есть, добавляем шаги, если нет, ставим 0
             const stepsData =
               chartData.length > 0
                 ? chartData.map((row: any) => parseFloat(row.steps || "0"))
                 : [0];
 
-            data.push(...stepsData); // Добавляем шаги в массив данных
+            data.push(...stepsData);
 
-            console.log(`Steps data for ${dates[i].date}:`, stepsData); // Проверка данных
+            // console.log(`Steps data for ${dates[i].date}:`, stepsData);
             break;
 
           case "heart_rate":
@@ -127,12 +127,11 @@ const AnalysesScreen = () => {
             break;
         }
 
-        // Добавляем данные для каждой даты в общий массив
         allData.push({ label: dates[i].date, data });
       }
 
-      console.log("Labels:", labels);
-      console.log("All Data:", allData);
+      // console.log("Labels:", labels);
+      // console.log("All Data:", allData);
 
       setChartData({
         labels,
@@ -144,15 +143,14 @@ const AnalysesScreen = () => {
 
       setLoading(false);
     } catch (error) {
-      console.error("Ошибка при загрузке данных графика:", error);
-      setErrorMessage("Произошла ошибка при загрузке данных.");
+      setErrorMessage("Error downloading data");
       setLoading(false);
     }
   };
 
   const renderChart = () => {
     if (loading) {
-      return <Text>Загрузка...</Text>;
+      return <Text>Update..</Text>;
     }
 
     return (
@@ -244,7 +242,7 @@ const AnalysesScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.appBar}>
           <Image
@@ -263,6 +261,10 @@ const AnalysesScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f8d7da",
+  },
   container: {
     flex: 1,
     backgroundColor: "#f8d7da",

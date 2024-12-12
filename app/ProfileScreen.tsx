@@ -22,7 +22,7 @@ const ProfileScreen = () => {
   const [steps, setSteps] = useState("");
   const [bedtime, setBedtime] = useState("");
   const [wakeUp, setWakeUp] = useState("");
-  const [gender, setGender] = useState(""); // Добавлено состояние для пола
+  const [gender, setGender] = useState("");
 
   const saveProfileData = () => {
     if (!age || !weight || !height || !steps || !gender) {

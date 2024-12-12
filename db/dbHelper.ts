@@ -38,6 +38,7 @@ interface WeightDataRow {
 }
 
 export const createTables = async (): Promise<void> => {
+  const startTime = Date.now();
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS dates (
       _id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -79,6 +80,9 @@ export const createTables = async (): Promise<void> => {
       FOREIGN KEY (_did) REFERENCES dates(_id)
     );
   `);
+  const endTime = Date.now();
+  console.log(`Database initialisation: ${endTime - startTime} ms`);
+
 };
 
 export const addDate = async (date: string): Promise<void> => {
@@ -98,8 +102,12 @@ export const addSleepingHours = async (hours: number, dateId: number): Promise<v
 };
 
 export const addStepsData = async (steps: string, dateId: number): Promise<void> => {
+  const startTime = performance.now();
   await db.runAsync('INSERT INTO steps_data (steps, _did) VALUES (?, ?)', [steps, dateId]);
+  const endTime = performance.now();
+  console.log(`Query time: ${(endTime - startTime).toFixed(2)} ms`);
 };
+
 
 export const addWeightData = async (weight: string, dateId: number): Promise<void> => {
   await db.runAsync('INSERT INTO weight_data (weight, _did) VALUES (?, ?)', [weight, dateId]);

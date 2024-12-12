@@ -15,9 +15,7 @@ const MainScreen = () => {
   const [currentDate, setCurrentDate] = useState("");
 
   const recommendations = [
-    "Eat healthy food",
-    "Exercise regularly",
-    "Set a daily goal",
+    "Set a daily goal!",
     "Drink more water",
     "Get enough sleep",
   ];
@@ -49,20 +47,15 @@ const MainScreen = () => {
         const month = today.getMonth();
         const year = today.getFullYear();
 
-        const monthName = today.toLocaleString("default", { month: "long" });
+        const monthName = today.toLocaleString("en-US", { month: "long" });
 
-        const currentDateStringForDB = `${day}.${String(month + 1).padStart(
-          2,
-          "0"
-        )}`;
         setCurrentDate(`${day} ${monthName} ${year}`);
 
-        // await dbHelper.addDate("01.12");
-        // await dbHelper.addDate("02.12");
-        // await dbHelper.addDate("03.12");
-        // await dbHelper.addDate("04.12");
+        const startTime = performance.now();
+        const endTime = performance.now();
+        console.log(`Query time: ${(endTime - startTime).toFixed(2)} ms`);
       } catch (error) {
-        console.error("Error setting up database:", error);
+        console.error("Database error:", error);
       }
     };
 
@@ -87,12 +80,12 @@ const MainScreen = () => {
             source={require("../assets/main_icon.png")}
             style={styles.appBarImage}
           />
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={styles.deleteButton}
             onPress={handleDeleteDatabase}
           >
             <Text style={styles.deleteButtonText}>Clear DB</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
 
         <FlatList
