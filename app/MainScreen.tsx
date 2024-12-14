@@ -10,9 +10,11 @@ import {
   SafeAreaView,
 } from "react-native";
 import * as dbHelper from "../db/dbHelper";
+import RNBluetoothClassic from "react-native-bluetooth-classic";
 
 const MainScreen = () => {
   const [currentDate, setCurrentDate] = useState("");
+  const targetDeviceName = "MBT-APG";
 
   const recommendations = [
     "Set a daily goal!",
@@ -60,7 +62,34 @@ const MainScreen = () => {
     };
 
     setupDatabase();
+    connectToBtDevice();
   }, []);
+
+  const connectToBtDevice = async () => {
+    try {
+      const devices = await RNBluetoothClassic.getBondedDevices();
+      const targetDevice = devices.find(
+        (device) => device.name === targetDeviceName
+      );
+
+      if (!targetDevice) {
+        console.log(`${targetDeviceName} not found.`);
+        return;
+      }
+
+      const isConnected = await RNBluetoothClassic.connectToDevice(
+        targetDevice.address
+      );
+
+      if (isConnected) {
+        console.log("Connection to ", targetDevice.name);
+      } else {
+        console.log("Cannot connect.");
+      }
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
 
   const handleDeleteDatabase = async () => {
     try {
